@@ -1,0 +1,101 @@
+import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.scene.image.Image;
+import java.text.DecimalFormat;
+
+
+
+
+public class BMIFX extends Application {
+    private TextField BMITextField;
+    private TextField weightTextField;
+    private TextField heightTextField;
+
+    public void start(Stage primaryStage) {
+  
+        //--- app title ---
+        primaryStage.setTitle("BMI Calculator");
+    
+        //--- app icon ---
+        primaryStage.getIcons().add(new Image("https://icon-library.com/images/gym-icon-png/gym-icon-png-15.jpg"));
+    
+        //--- text fields ---
+        BMITextField = new TextField();
+        weightTextField = new TextField();
+        heightTextField = new TextField();
+
+        //--- labels ----
+        Label weightLabel = new Label("Weight: ");
+        Label heightLabel = new Label("Height: "); 
+
+        //--- event handler button ---
+        Button calculateButton = new Button("Calculate BMI");
+
+        //--- event handler ---
+        calculateButton.setOnAction(e -> calculateBMI());
+
+        //--- layout and UI ---
+        VBox vbox = new VBox(10);
+        vbox.setPadding(new Insets(50));
+        vbox.setAlignment(Pos.CENTER);
+
+        vbox.getChildren().addAll(weightLabel, weightTextField, heightLabel, heightTextField, calculateButton, BMITextField);
+
+        //--- creating a scene ---
+        Scene scene = new Scene(vbox, 500, 425);
+
+        //--- showing a scene ---
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    
+    }
+
+
+     private void calculateBMI() {
+        try {
+            float weight = Float.parseFloat(weightTextField.getText());
+            float height = Float.parseFloat(heightTextField.getText());
+            float bmi = vypocetBMI(weight, height);
+            String result = slovneBMI(bmi);
+            BMITextField.setText("BMI: " + formatToTwoDecimalPlaces(bmi) + " - " + result);
+        } catch (NumberFormatException e) {
+            BMITextField.setText("Invalid input. Please enter valid weight and height.");
+        }
+    }
+
+    public float vypocetBMI(float weight, float height) {
+        return weight / ((float) Math.pow((height / 100), 2));
+    }
+
+    public String slovneBMI(float bmi) {
+        if (bmi < 18.5) {
+            return "Underweight";
+        } else if (bmi >= 18.5 && bmi < 25) {
+            return "Normal weight";
+        } else if (bmi > 25 && bmi <= 29.99) {
+            return "Overweight";
+        } else if (bmi >= 30 && bmi <= 34.99) {
+            return "Obesity Grade 1";
+        } else if (bmi >= 35 && bmi <= 39.99) {
+            return "Obesity Grade 2";
+        } else {
+            return "Obesity Grade 3";
+        }
+    }
+
+    private String formatToTwoDecimalPlaces(float value) {
+        DecimalFormat df = new DecimalFormat("#.##");
+        return df.format(value);
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
